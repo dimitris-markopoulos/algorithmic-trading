@@ -30,10 +30,14 @@ It includes:
 
 ## Quick Start
 
-> Install dependencies:
+> Install dependencies (in terminal):
 ```bash
 pip install -r requirements.txt
 ```
+> Install dependencies (in jupyter notebook):
+ ```python3
+%pip install -r requirements.txt --quiet
+````
 > Run in google colab or IDE
 ``` python
 from ml_pipeline import SVMTradingPipeline
@@ -46,10 +50,8 @@ params = {
     'test_prop':0.05,
     'initial_capital':10000,
     'plot_path':'model_vs_benchmark_PnL.png',
-    'runtime':'fast'
+    'runtime':'fast' # 'slow' is VERY slow requires n_jobs = -1
 }
 
-results = run_full_backtest(**params)
-
-# Can pull pd.DataFrame -> df = results[0]
+results = run_full_backtest(**params) # Can pull pd.DataFrame -> df = results[0]
 ```
