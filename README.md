@@ -1,3 +1,5 @@
+**Working Progress :>**
+
 # Algorithmic Trading
 
 *This is an evolving collection of trading models where I continuously build and refine machine learning pipelines for market prediction.*
