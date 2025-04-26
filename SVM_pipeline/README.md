@@ -44,7 +44,7 @@ from ml_pipeline import SVMTradingPipeline
 from run import run_full_backtest
 
 params = {
-    'ticker':'NKE',
+    'ticker':'AAPL',
     'start':'2010-01-01',
     'end':'2025-04-22',
     'test_prop':0.05,
