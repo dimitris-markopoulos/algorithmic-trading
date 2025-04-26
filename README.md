@@ -8,7 +8,7 @@ Each folder is a self-contained strategy with modular code and full backtesting 
 
 ## Pipelines
 
-- `SVM_pipeline/` – SVM classifier with macro features and time-series CV  
+- `SVM_pipeline/` – SVM classifier with macro features and time-series CV (tuned for tech stocks)
 - `x4_pipeline/` – 4-model ensemble (LR, RF, XGBoost, LGBM); fixed parameters used to avoid overfitting from excessive tuning
 
 ## Usage
