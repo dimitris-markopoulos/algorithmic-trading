@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import yfinance as yf
+import sklearn
+from sklearn.preprocessing import StandardScaler
 
 class Pipeline:
     def __init__(self, start, end):
@@ -26,18 +28,24 @@ class Pipeline:
 
         #---Returns---
         tickers = params['tickers']
-        engineered_dict = {f'{ticker}_logreturns':[] for ticker in tickers}
+        engineered_dict = {f'{ticker}_logreturns': [] for ticker in tickers if ticker != '^VIX'}
         for ticker in tickers:
-            adj = raw_data.loc[:,('Adj Close',ticker)]
-            log_returns = np.log(adj) - np.log(adj.shift(1))
-            log_returns_vals = list(log_returns.values)
-            engineered_dict[str(f'{ticker}_logreturns')].extend(log_returns)
+            if ticker == '^VIX':
+                pass
+            else:
+                adj = raw_data.loc[:,('Adj Close',ticker)]
+                log_returns = np.log(adj) - np.log(adj.shift(1))
+                log_returns_vals = list(log_returns.values)
+                engineered_dict[str(f'{ticker}_logreturns')].extend(log_returns)
 
             if ticker in ['MSFT']:
                 ewma = log_returns.ewm(alpha=0.1, adjust=False).mean()
                 engineered_dict[f'{ticker}_ewm'] = ewma
 
+        vix = raw_data.loc[:, ('Adj Close', '^VIX')]
+        engineered_dict['VIX'] = vix
         returns_ewm_df = pd.DataFrame(engineered_dict, index=raw_data.index).dropna() # Drop NA
+
         df = returns_ewm_df
 
         #---Moving Average Differential/Spread---
@@ -77,4 +85,31 @@ class Pipeline:
 
         self.df = df
         self.df2 = df2 # Use when 1,-1 mapping is required such as SVMs
+        
         return df
+    
+    def split(self, df, train_proportion = 0.90, scale = True):
+
+        #---Split---
+        split = {'prop_tr':train_proportion,'prop_ts':1-train_proportion}
+        assert abs(sum(split.values()) - 1.0) < 1e-8, "Split proportions must sum to 1.0"
+
+        n,p = df.shape
+        n_tr = int(np.ceil(n*split['prop_tr']))
+
+        X = df.drop(columns='Target')
+        y = df['Target']
+
+        X_tr, y_tr = X.iloc[:n_tr].to_numpy(), y.iloc[:n_tr].to_numpy()
+        X_ts, y_ts = X.iloc[n_tr:].to_numpy(), y.iloc[n_tr:].to_numpy()
+        
+        if scale == False:
+            return {'X_tr': X_tr, 'X_ts': X_ts, 'y_tr':y_tr, 'y_ts':y_ts}
+
+        else:
+            scaler = StandardScaler() # Scale features
+            X_tr_scaled = scaler.fit_transform(X_tr) # fit on training and scale
+            X_ts_scaled = scaler.transform(X_ts) # use trained scaler (dont leak test set by using it to scale!)
+            return {'X_tr_scaled': X_tr_scaled, 'X_ts_scaled': X_ts_scaled, 'y_tr':y_tr, 'y_ts':y_ts}
+        
+        

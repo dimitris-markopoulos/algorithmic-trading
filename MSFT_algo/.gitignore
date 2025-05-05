@@ -1,0 +1,25 @@
+# Ignore data/media/output
+media/
+*.csv
+*.xlsx
+*.h5
+*.npz
+
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+*.so
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore virtual environments
+venv/
+.env/
+
+# Ignore logs
+*.log
+
+# Ignore OS metadata
+.DS_Store
+Thumbs.db
