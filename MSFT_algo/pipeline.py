@@ -28,9 +28,9 @@ class Pipeline:
 
         #---Returns---
         tickers = params['tickers']
-        engineered_dict = {f'{ticker}_logreturns': [] for ticker in tickers if ticker != '^VIX'}
+        engineered_dict = {f'{ticker}_logreturns': [] for ticker in tickers if ticker not in ['^VIX', '^TNX']}
         for ticker in tickers:
-            if ticker == '^VIX':
+            if ticker in ['^VIX', '^TNX']:
                 pass
             else:
                 adj = raw_data.loc[:,('Adj Close',ticker)]
@@ -44,6 +44,9 @@ class Pipeline:
 
         vix = raw_data.loc[:, ('Adj Close', '^VIX')]
         engineered_dict['VIX'] = vix
+
+        tnx = raw_data.loc[:, ('Adj Close', '^TNX')]
+        engineered_dict['TNX'] = tnx
         returns_ewm_df = pd.DataFrame(engineered_dict, index=raw_data.index).dropna() # Drop NA
 
         df = returns_ewm_df
