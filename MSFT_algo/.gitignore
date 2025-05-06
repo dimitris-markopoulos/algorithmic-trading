@@ -1,3 +1,10 @@
+# Ignore data/media/output
+media/
+*.csv
+*.xlsx
+*.h5
+*.npz
+
 # Ignore Python cache files
 __pycache__/
 *.py[cod]
